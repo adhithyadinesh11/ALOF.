@@ -1,0 +1,13 @@
+ALOF V35 FINAL — auth/session + Supabase persistence + swim-only mileage
+
+1. Supabase auth session persistence uses a stable storage key and PKCE.
+2. Auth state listener is registered before session restoration and handles INITIAL_SESSION, SIGNED_IN, TOKEN_REFRESHED and SIGNED_OUT safely.
+3. Cloud workout/event data is loaded after authentication, with retries.
+4. Local per-user data is retained as a cache/backup and merged with cloud records by id + updatedAt.
+5. Saving a workout waits for the cloud write chain; failed cloud writes keep the local copy and retry later.
+6. Existing Supabase data is never deleted.
+7. CHECK YOUR MILEAGE is rendered only on the SWIM training page.
+8. Mileage sums swim mileage records and displays weekly/monthly totals.
+9. JavaScript syntax was checked with Node.js.
+
+SUPABASE: The existing public.alof_data table and RLS policies shown in the project are sufficient for athlete read/insert/update. Do not delete the existing row.

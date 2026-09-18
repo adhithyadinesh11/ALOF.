@@ -1,0 +1,13 @@
+{
+  "name": "ALOF. — A Lap of Faith",
+  "short_name": "ALOF.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3efe7",
+  "theme_color": "#f3efe7",
+  "description": "A personal athlete training diary for swim, gym and calendar logs. ALOF V34.",
+  "icons": [
+    {"src": "alof-icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"},
+    {"src": "alof-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

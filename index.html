@@ -618,18 +618,19 @@ async function clearEvent(id){
   saveLocal();
   renderCalendar();
 
-  const ok=await saveCloud();
-  if(!ok){
+  try{
+    if(!currentUser||!cloudReady) throw new Error('Cloud is not ready');
+    await queueCloudSave();
+    if(pendingCloudSave) throw new Error('Cloud write was not confirmed');
+    toast('Event cleared');
+  }catch(e){
+    console.error('Calendar clear failed',e);
     state.events=before;
     window.state=state;
     saveLocal();
     renderCalendar();
-    toast('Calendar could not be saved. Event restored.');
-    return;
+    toast('Calendar could not be cleared');
   }
-
-  pendingCloudSave=false;
-  toast('Event cleared');
 }
 function renderCalendar(){
   document.getElementById('calMonth').textContent=months[view.getMonth()]+' '+view.getFullYear();
@@ -679,35 +680,30 @@ async function saveEvent(){
   if(kind==='Competition'&&(!endDate||endDate<date)){toast('End date must be on or after start date');return}
 
   const before=Array.isArray(state.events)?state.events.slice():[];
-  const event={
-    id:Date.now(),
-    title,
-    date,
-    startDate:date,
+  state.events=[...before,{
+    id:Date.now(),title,date,startDate:date,
     endDate:kind==='Competition'?endDate:date,
-    kind,
-    color:document.getElementById('evColor').value,
+    kind,color:document.getElementById('evColor').value,
     note:document.getElementById('evNote').value.trim()
-  };
-
-  state.events=[...before,event];
+  }];
   window.state=state;
   saveLocal();
   renderCalendar();
 
-  const ok=await saveCloud();
-  if(!ok){
+  try{
+    if(!currentUser||!cloudReady) throw new Error('Cloud is not ready');
+    await queueCloudSave();
+    if(pendingCloudSave) throw new Error('Cloud write was not confirmed');
+    document.getElementById('eventForm').innerHTML='';
+    toast('Event added');
+  }catch(e){
+    console.error('Calendar add failed',e);
     state.events=before;
     window.state=state;
     saveLocal();
     renderCalendar();
-    toast('Calendar could not be saved. Event was not added.');
-    return;
+    toast('Calendar could not be added');
   }
-
-  pendingCloudSave=false;
-  document.getElementById('eventForm').innerHTML='';
-  toast('Event added');
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
 function toggleMenu(ev,id){ev.stopPropagation();closeMenus(id);document.getElementById(id)?.classList.toggle('show')}

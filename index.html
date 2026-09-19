@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3efe7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ALOF.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="180x180" href="alof-icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="alof-icon-180.png">
+<title>ALOF - A Lap of Faith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3efe7;--paper:#f8f5ef;--ink:#191918;--muted:#77736b;--line:#d0c9bd;--soft:#e9e3d9;--white:#fffdf8;--radius:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Syne',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.app{max-width:560px;margin:auto;min-height:100vh;padding:24px 20px 44px}
+.top{height:54px;display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}
+.wordmark{display:flex;align-items:center;gap:10px}.mini-logo{width:31px;height:31px;object-fit:cover;border-radius:8px;display:none}.wordmark h1{font-family:'Syne',Arial,sans-serif;font-size:31px;font-weight:700;line-height:1;letter-spacing:-2px;margin:0}.wordmark small{display:block;font-size:8px;letter-spacing:2.3px;color:var(--muted);margin-top:5px}
+.back{width:40px;height:40px;border:1px solid var(--line);background:transparent;border-radius:50%;font-size:20px;display:none}.back.show{display:block}
+.screen{display:none}.screen.active{display:block}
+.hero{padding:28px 0 34px;text-align:center}.hero-logo{width:104px;height:104px;object-fit:cover;border-radius:25px;margin-bottom:16px;display:none}.hero h2{font-size:54px;letter-spacing:-4px;margin:0}.hero p{font-size:9px;letter-spacing:3px;color:var(--muted);margin:9px 0 0}
+.home-grid{display:grid;gap:13px}.home-card{width:100%;min-height:106px;padding:23px 25px;border:1px solid var(--line);border-radius:20px;background:rgba(248,245,239,.72);display:flex;align-items:center;justify-content:space-between;text-align:left;transition:.18s transform,.18s background}.home-card:hover{transform:translateY(-2px);background:var(--paper)}.home-card strong{font-size:23px;font-weight:600;letter-spacing:-1px}.home-card small{display:block;font-size:9px;letter-spacing:1.2px;color:var(--muted);margin-top:6px}.line-icon{font-size:27px;font-weight:400}
+.home-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.metric{border-top:1px solid var(--line);padding:15px 2px}.metric b{font-size:21px}.metric span{display:block;font-size:8px;color:var(--muted);letter-spacing:1.4px;margin-top:4px}.home-events{margin-top:30px;border-top:1px solid var(--line);padding-top:20px}.home-events-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.home-events-head>span{font-size:8px;letter-spacing:2px;color:var(--muted)}.home-events-head button{border:0;background:none;font-size:8px;letter-spacing:1px;padding:4px 0}.home-event{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.home-event-date{width:43px;text-align:center}.home-event-date b{font-size:17px;display:block}.home-event-date small{font-size:7px;color:var(--muted);letter-spacing:1px}.home-event-body{flex:1}.home-event-body strong{font-size:12px}.home-event-body span{display:block;color:var(--muted);font-size:8px;margin-top:4px}.clear-event{border:1px solid var(--line);background:transparent;border-radius:10px;padding:7px 8px;font-size:7px;letter-spacing:.7px}
+.page-title{text-align:center;margin:3px 0 25px}.page-title h2{font-size:30px;letter-spacing:-1.8px;margin:0}.page-title p{font-size:8px;letter-spacing:2px;color:var(--muted);margin:7px 0 0}
+.section-head{position:relative;display:flex;justify-content:flex-end;align-items:flex-start;margin-bottom:25px}.section-head .page-title{margin:3px 0 0;position:absolute;left:0;right:0;pointer-events:none}.menu-wrap{position:relative;z-index:3}.menu-btn{width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:50%;font-size:17px;line-height:1}.menu-pop{position:absolute;right:0;top:42px;width:205px;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:7px;box-shadow:0 12px 30px rgba(25,25,24,.08);display:none}.menu-pop.show{display:block}.menu-pop button{width:100%;border:0;background:transparent;text-align:left;padding:11px 10px;border-radius:10px;font-size:8px;letter-spacing:1px}.menu-pop button:hover{background:var(--soft)}
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin:0 2px 14px}.monthbar button{border:0;background:none;font-size:25px;width:36px;height:36px}.monthbar strong{font-size:15px;letter-spacing:-.3px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.dow{text-align:center;font-size:8px;color:var(--muted);padding:5px 0}.day{position:relative;min-height:45px;border:1px solid transparent;background:transparent;border-radius:13px;font-size:12px}.day:hover{border-color:var(--line)}.day.today{border-color:var(--ink)}.day.selected{background:var(--ink);color:var(--bg)}.day.has:after{content:"";position:absolute;width:4px;height:4px;border-radius:50%;background:currentColor;bottom:5px;left:50%;transform:translateX(-50%)}
+.panel{border-top:1px solid var(--line);margin-top:25px;padding-top:23px}.eyebrow{font-size:8px;color:var(--muted);letter-spacing:2px;margin:0 0 14px}.session-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.session{padding:20px;border:1px solid var(--line);background:var(--paper);border-radius:18px;text-align:left}.session strong{font-size:14px}.session small{display:block;color:var(--muted);font-size:8px;letter-spacing:.8px;margin-top:6px}.session .arr{float:right;font-size:19px}
+.primary{width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:15px;padding:15px;font-size:10px;letter-spacing:1px}.ghost{width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:14px;font-size:10px;letter-spacing:1px;margin-top:9px}
+.field{margin-top:15px}.field label{display:block;font-size:8px;letter-spacing:1.6px;color:var(--muted);margin:0 0 7px}textarea,input,select{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px;outline:none}textarea{min-height:150px;resize:vertical;font-size:12px;line-height:1.6}.entry-font{font-family:Arial,sans-serif !important}.entry-font *{font-family:Arial,sans-serif !important}
+.exercise{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:14px;margin-bottom:10px}.exercise-head{display:flex;gap:8px;align-items:center}.exercise-head input{flex:1}.remove{width:36px;height:36px;border:1px solid var(--line);background:transparent;border-radius:11px}.exercise-grid{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px;margin-top:8px}.exercise-grid input{font-size:11px;padding:11px}.rich-toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:9px;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;background:var(--paper)}
+.rich-toolbar button{min-width:34px;height:32px;border:1px solid var(--line);background:transparent;border-radius:9px;font-size:12px}
+.rich-toolbar button:hover{background:var(--soft)}
+.rich-editor{min-height:180px;border:1px solid var(--line);border-radius:0 0 14px 14px;background:var(--paper);padding:14px;outline:none;font-size:12px;line-height:1.7}
+.rich-editor:empty:before{content:attr(data-placeholder);color:var(--muted)}
+.color-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:7px;vertical-align:middle}
+.event-color-1{background:#8b5e5e}.event-color-2{background:#5e718b}.event-color-3{background:#6f805e}.event-color-4{background:#8a7653}.event-color-5{background:#75658a}
+.set-list{margin-top:9px}.set-row{display:grid;grid-template-columns:28px 1fr 1fr 32px;gap:7px;align-items:center;margin-top:7px}.set-row input{font-size:11px;padding:10px}.set-number{font-size:9px;color:var(--muted);text-align:center}.add-set{width:100%;margin-top:9px;border:1px solid var(--line);background:transparent;border-radius:11px;padding:10px;font-size:9px;letter-spacing:1px}.set-remove{width:32px;height:34px;border:1px solid var(--line);background:transparent;border-radius:10px}
+.log-row{display:flex;gap:12px;align-items:center;border:1px solid var(--line);background:var(--paper);padding:15px;border-radius:17px;margin-bottom:9px}.log-date{width:43px;text-align:center}.log-date b{font-size:18px;display:block}.log-date small{font-size:7px;color:var(--muted);letter-spacing:1px}.log-info{flex:1}.log-info strong{font-size:13px}.log-info p{font-size:9px;color:var(--muted);margin:5px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chev{font-size:18px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line);margin-bottom:16px}.tab{border:0;background:transparent;padding:12px 4px;font-size:9px;letter-spacing:1px;color:var(--muted);border-bottom:1px solid transparent}.tab.active{color:var(--ink);border-color:var(--ink)}
+.event{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}.event-date{width:42px;text-align:center}.event-date b{font-size:18px;display:block}.event-date small{font-size:7px;color:var(--muted);letter-spacing:1px}.event-body{flex:1}.event-body strong{font-size:13px}.event-body span{display:block;font-size:8px;color:var(--muted);margin-top:5px}.tag{float:right;font-size:7px;letter-spacing:.8px;border:1px solid var(--line);padding:4px 6px;border-radius:20px;color:var(--muted)}
+.diary{border:1px solid var(--line);background:var(--paper);border-radius:18px;padding:18px}.diary h3{font-size:15px;margin:0}.diary p{font-size:10px;color:#5c5952;line-height:1.7;white-space:pre-wrap}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+.empty{text-align:center;color:var(--muted);font-size:10px;line-height:1.7;padding:22px}
+.footer{text-align:center;color:var(--muted);font-size:8px;letter-spacing:2px;line-height:1.7;margin-top:48px}
+
+#authGate{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 20px}.auth-card{width:min(430px,100%);text-align:center}.auth-brand{font-size:54px;letter-spacing:-4px;margin:0}.auth-sub{font-size:9px;letter-spacing:3px;color:var(--muted);margin:9px 0 34px}.auth-box{border:1px solid var(--line);background:rgba(248,245,239,.72);border-radius:22px;padding:24px;text-align:left}.auth-box h3{margin:0;font-size:17px;letter-spacing:-.4px}.auth-box>p{font-size:10px;color:var(--muted);line-height:1.6;margin:7px 0 18px}.auth-switch{margin-top:15px;text-align:center;font-size:9px;color:var(--muted)}.auth-link{border:0;background:none;padding:0;text-decoration:underline;font-size:9px}.auth-message{min-height:18px;text-align:center;color:var(--muted);font-size:9px;line-height:1.5;margin-top:12px}.auth-user{position:fixed;right:20px;top:24px;z-index:10}.account-btn{border:1px solid var(--line);background:transparent;border-radius:99px;padding:9px 12px;font-size:8px;letter-spacing:1px}.account-pop{position:absolute;right:0;top:42px;width:210px;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:12px;box-shadow:0 12px 30px rgba(25,25,24,.08);display:none}.account-pop.show{display:block}.account-email{font-size:9px;color:var(--muted);padding:4px 6px 10px;word-break:break-word}.account-pop button{width:100%;border:0;background:transparent;text-align:left;padding:10px 6px;border-radius:9px;font-size:8px;letter-spacing:1px}.account-pop button:hover{background:var(--soft)}.auth-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;color:var(--muted);font-size:9px;letter-spacing:1.5px}
+.export-modal{position:fixed;inset:0;background:rgba(0,0,0,.18);display:none;align-items:center;justify-content:center;z-index:50;padding:24px}.export-modal.show{display:flex}.export-card{width:min(390px,100%);background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 18px 50px rgba(0,0,0,.12)}.export-card h3{margin:0 0 5px;font-size:16px;letter-spacing:-.3px}.export-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.5}.export-actions{display:flex;gap:8px;margin-top:18px}.export-actions button{flex:1}.secondary{background:transparent;border:1px solid var(--line);border-radius:14px;padding:13px;font-size:9px;letter-spacing:1.2px;font-weight:700}.export-range{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:99px;font-size:9px;letter-spacing:.5px;transition:.2s;z-index:20}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){.app{padding-top:34px}.hero h2{font-size:64px}}
+
+/* ALOF launch reveal */
+#launchSplash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#launchSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.launch-logo{width:126px;height:126px;object-fit:cover;border-radius:28px;animation:alofReveal 1.05s cubic-bezier(.2,.75,.25,1) both}
+@keyframes alofReveal{0%{opacity:0;transform:scale(.82);filter:blur(7px)}55%{opacity:1;transform:scale(1.03);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@media(max-width:699px){
+  .app{padding:8px 16px 18px;min-height:100svh}
+  .top{height:26px;margin-bottom:4px}
+  .hero{padding:4px 0 13px}
+  .hero h2{font-size:47px;letter-spacing:-3.5px}
+  .hero p{font-size:8px;letter-spacing:2.6px;margin-top:6px}
+  .home-grid{gap:9px}
+  .home-card{min-height:82px;padding:16px 18px;border-radius:17px}
+  .home-card strong{font-size:20px}
+  .home-card small{font-size:8px;letter-spacing:1px;margin-top:4px}
+  .line-icon{font-size:24px}
+  .home-events{margin-top:17px;padding-top:13px}
+  .home-events-head{margin-bottom:2px}
+  .home-event{padding:9px 0;gap:9px}
+  .home-event-date{width:37px}
+  .home-event-date b{font-size:15px}
+  .home-event-date small{font-size:6px}
+  .home-event-body strong{font-size:11px}
+  .home-event-body span{font-size:7px;margin-top:2px}
+  .clear-event{padding:6px 7px;font-size:6px}
+  .empty{font-size:9px;line-height:1.7;padding:10px 0 4px}
+  .footer{font-size:7px;letter-spacing:1.6px;line-height:1.5;margin-top:20px}
+}
+
+/* V17 - mobile header spacing only */
+@media(max-width:700px){
+  .top{padding:18px 18px 0;min-height:52px;}
+  .back.show{margin-left:0;}
+  .auth-user{top:18px;right:18px;}
+  .account-btn{padding:8px 10px;}
+  .app{padding-top:4px;}
+}
+</style>
+</head>
+<body>
+<div id="launchSplash" aria-hidden="true"><img class="launch-logo" src="alof-icon-180.png" alt="ALOF."></div>
+<div id="authLoading" class="auth-loading">LOADING ALOF.</div>
+<section id="authGate">
+  <div class="auth-card">
+    <h1 class="auth-brand">ALOF.</h1><p class="auth-sub">A LAP OF FAITH</p>
+    <div class="auth-box">
+      <h3 id="authTitle">WELCOME BACK</h3>
+      <p id="authIntro">Log in to your personal training diary.</p>
+      <div class="field"><label>EMAIL</label><input class="entry-font" id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label>PASSWORD</label><input class="entry-font" id="authPassword" type="password" autocomplete="current-password" placeholder="At least 8 characters"></div>
+      <div class="field" id="authConfirmWrap" style="display:none"><label>CONFIRM PASSWORD</label><input class="entry-font" id="authConfirm" type="password" autocomplete="new-password" placeholder="Repeat your password"></div>
+      <button class="primary" id="authAction" style="margin-top:18px" onclick="submitAuth()">LOG IN</button>
+      <div id="authMessage" class="auth-message"></div>
+      <div class="auth-switch"><button class="auth-link" id="authModeLink" onclick="toggleAuthMode()">CREATE AN ACCOUNT</button></div>
+      <div class="auth-switch" id="forgotWrap"><button class="auth-link" onclick="resetPassword()">FORGOT PASSWORD?</button></div>
+    </div>
+  </div>
+</section>
+<div id="accountUser" class="auth-user" style="display:none">
+  <button class="account-btn" onclick="toggleAccount(event)">ACCOUNT</button>
+  <div class="account-pop" id="accountPop"><div class="account-email" id="accountEmail"></div><button onclick="signOut()">LOG OUT</button></div>
+</div>
+<div class="app" id="appShell" style="display:none">
+<header class="top">
+  <div></div>
+  <button class="back" id="backBtn" onclick="goHome()">←</button>
+</header>
+
+<section id="home" class="screen active">
+  <div class="hero"><h2>ALOF.</h2><p>A LAP OF FAITH</p></div>
+  <div class="home-grid">
+    <button class="home-card" onclick="openTraining('swim')"><div><strong>SWIM</strong><small>AM - PM SESSIONS</small></div><span class="line-icon">≈</span></button>
+    <button class="home-card" onclick="openTraining('gym')"><div><strong>GYM</strong><small>STRENGTH & CONDITIONING</small></div><span class="line-icon">＋</span></button>
+    <button class="home-card" onclick="openCalendar()"><div><strong>CALENDAR</strong><small>COMPETITIONS - EVENTS - REMINDERS</small></div><span class="line-icon">□</span></button>
+  </div>
+  <div class="home-events">
+    <div class="home-events-head"><span>UPCOMING</span><button onclick="openCalendar()">VIEW ALL</button></div>
+    <div id="homeUpcoming"></div>
+  </div>
+  <div class="footer">DESIGNED TO BE A REFERENCE FOR FUTURE YOU</div>
+</section>
+
+<section id="training" class="screen">
+  <div class="section-head"><div class="page-title"><h2 id="trainingTitle">SWIM</h2><p>SELECT A DATE</p></div><div class="menu-wrap"><button class="menu-btn" onclick="toggleMenu(event,'swimMenu')" aria-label="Swim menu">☰</button><div class="menu-pop" id="swimMenu"><button onclick="exportPDF('swim');closeMenus()">DOWNLOAD SWIM LOGS - PDF</button></div></div></div>
+  <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><strong id="trainingMonth"></strong><button onclick="shiftMonth(1)">›</button></div>
+  <div class="calendar" id="trainingCalendar"></div>
+  <div class="panel" id="trainingPanel"></div>
+</section>
+
+<section id="logs" class="screen">
+  <div class="page-title"><h2 id="logsTitle">WORKOUTS</h2><p>YOUR TRAINING DIARY</p></div>
+  <div class="tabs">
+    <button class="tab active" data-filter="all" onclick="setLogFilter('all')">ALL</button>
+    <button class="tab" data-filter="swim" onclick="setLogFilter('swim')">SWIM</button>
+    <button class="tab" data-filter="gym" onclick="setLogFilter('gym')">GYM</button>
+  </div>
+  <div id="logsList"></div>
+</section>
+
+<section id="workoutEditor" class="screen">
+  <div class="page-title"><h2 id="editorTitle">WORKOUT</h2><p id="editorSub"></p></div>
+  <div id="editorBody"></div>
+</section>
+
+<section id="calendar" class="screen">
+  <div class="section-head"><div class="page-title"><h2>CALENDAR</h2><p>PLAN WHAT'S NEXT</p></div><div class="menu-wrap"><button class="menu-btn" onclick="toggleMenu(event,'calendarMenu')" aria-label="Calendar menu">☰</button><div class="menu-pop" id="calendarMenu"><button onclick="exportPDF('calendar');closeMenus()">DOWNLOAD CALENDAR LOGS - PDF</button><button onclick="openExportRange('calendar');closeMenus()">CUSTOM DATE RANGE - PDF</button><button onclick="exportPDF('all');closeMenus()">DOWNLOAD COMPLETE ALOF - PDF</button></div></div></div>
+  <div class="monthbar"><button onclick="shiftMonth(-1)">‹</button><strong id="calMonth"></strong><button onclick="shiftMonth(1)">›</button></div>
+  <div class="calendar" id="mainCalendar"></div>
+  <div class="panel">
+    <p class="eyebrow">UPCOMING</p>
+    <div id="upcoming"></div>
+    <button class="primary" onclick="eventForm()">+ ADD EVENT / REMINDER</button>
+    <div id="eventForm"></div>
+  </div>
+</section>
+
+<div class="export-modal" id="exportModal" onclick="if(event.target===this)closeExportModal()"><div class="export-card"><h3 id="exportModalTitle">CUSTOM DATE RANGE</h3><p>Choose the period you want to include in the PDF.</p><div class="export-range"><div class="field"><label>FROM</label><input id="exportFrom" type="date"></div><div class="field"><label>TO</label><input id="exportTo" type="date"></div></div><div class="export-actions"><button class="secondary" onclick="closeExportModal()">CANCEL</button><button class="primary" onclick="confirmCustomExport()">DOWNLOAD PDF</button></div></div></div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://yqydnwfltaxbkvghlryl.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_76OD0PzlB4E5XAnx26jZoQ_NOYTEIhg';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const CLOUD_TABLE='alof_data';
+let currentUser=null,cloudReady=false,cloudSaveTimer=null,authMode='login';
+const STORE='ALOF_INSANE_V1';
+let state=JSON.parse(localStorage.getItem(STORE)||'{"workouts":[],"events":[]}');
+let view=new Date(), selected=new Date(), trainingMode='swim', logFilter='all', editingId=null;
+function saveLocal(){localStorage.setItem(STORE,JSON.stringify(state));}
+function persist(){saveLocal();updateHome();queueCloudSave();}
+function queueCloudSave(){if(!currentUser||!cloudReady)return;clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(saveCloud,350);}
+async function saveCloud(){if(!currentUser||!cloudReady)return;const payload={workouts:state.workouts||[],events:state.events||[]};const {error}=await supabaseClient.from(CLOUD_TABLE).upsert({user_id:currentUser.id,data:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error){console.error(error);toast('Cloud save failed - local copy kept');}}
+async function loadCloudForUser(user){
+ currentUser=user;
+ const localState={workouts:Array.isArray(state.workouts)?state.workouts:[],events:Array.isArray(state.events)?state.events:[]};
+ const {data,error}=await supabaseClient.from(CLOUD_TABLE).select('data').eq('user_id',user.id).maybeSingle();
+ if(error){console.error(error);cloudReady=false;toast('Cloud unavailable - local copy kept');return;}
+ const cloudState=(data?.data&&typeof data.data==='object')?{workouts:Array.isArray(data.data.workouts)?data.data.workouts:[],events:Array.isArray(data.data.events)?data.data.events:[]}:{workouts:[],events:[]};
+ // Merge local and cloud instead of replacing local data. This prevents newer locally
+ // logged workouts from disappearing when an older cloud snapshot is loaded.
+ const mergeById=(cloudItems,localItems)=>{
+   const map=new Map();
+   cloudItems.forEach(item=>map.set(String(item.id),item));
+   localItems.forEach(item=>map.set(String(item.id),item));
+   return Array.from(map.values());
+ };
+ state={
+   workouts:mergeById(cloudState.workouts,localState.workouts),
+   events:mergeById(cloudState.events,localState.events)
+ };
+ saveLocal();
+ cloudReady=true;
+ updateHome();
+ if(state.workouts.length!==cloudState.workouts.length||state.events.length!==cloudState.events.length||localState.workouts.length||localState.events.length){
+   await saveCloud();
+ }
+}
+function showAuth(message=''){document.getElementById('authLoading').style.display='none';document.getElementById('authGate').style.display='flex';document.getElementById('appShell').style.display='none';document.getElementById('accountUser').style.display='none';if(message)setAuthMessage(message);}
+function showApp(user){document.getElementById('authLoading').style.display='none';document.getElementById('authGate').style.display='none';document.getElementById('appShell').style.display='block';document.getElementById('accountUser').style.display='none';document.getElementById('accountEmail').textContent=user.email||'';goHome();}
+function setAuthMessage(t){const el=document.getElementById('authMessage');if(el)el.textContent=t||'';}
+function toggleAuthMode(){authMode=authMode==='login'?'signup':'login';const signup=authMode==='signup';document.getElementById('authTitle').textContent=signup?'CREATE ACCOUNT':'WELCOME BACK';document.getElementById('authIntro').textContent=signup?'Create your personal ALOF account. Your workouts will sync to the cloud.':'Log in to your personal training diary.';document.getElementById('authAction').textContent=signup?'CREATE ACCOUNT':'LOG IN';document.getElementById('authConfirmWrap').style.display=signup?'block':'none';document.getElementById('forgotWrap').style.display=signup?'none':'block';document.getElementById('authModeLink').textContent=signup?'BACK TO LOG IN':'CREATE AN ACCOUNT';setAuthMessage('');}
+async function submitAuth(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value,confirm=document.getElementById('authConfirm').value;if(!email||!password){setAuthMessage('Enter your email and password.');return}if(authMode==='signup'&&password!==confirm){setAuthMessage('Passwords do not match.');return}if(authMode==='signup'&&password.length<8){setAuthMessage('Password must be at least 8 characters.');return}const btn=document.getElementById('authAction');btn.disabled=true;btn.textContent=authMode==='signup'?'CREATING…':'LOGGING IN…';setAuthMessage('');try{if(authMode==='signup'){const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:window.location.href}});if(error)throw error;if(data.session){await loadCloudForUser(data.user);showApp(data.user);}else{setAuthMessage('Account created. Check your email to confirm your account, then log in.');}}else{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;await loadCloudForUser(data.user);showApp(data.user);}}catch(e){console.error(e);setAuthMessage(e.message||'Something went wrong.');}finally{btn.disabled=false;btn.textContent=authMode==='signup'?'CREATE ACCOUNT':'LOG IN';}}
+async function resetPassword(){const email=document.getElementById('authEmail').value.trim();if(!email){setAuthMessage('Enter your email first.');return}const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.href});setAuthMessage(error?error.message:'Password reset email sent.');}
+async function signOut(){await supabaseClient.auth.signOut();currentUser=null;cloudReady=false;clearTimeout(cloudSaveTimer);state={workouts:[],events:[]};saveLocal();document.getElementById('accountPop').classList.remove('show');authMode='login';document.getElementById('authTitle').textContent='WELCOME BACK';document.getElementById('authIntro').textContent='Log in to your personal training diary.';document.getElementById('authAction').textContent='LOG IN';document.getElementById('authConfirmWrap').style.display='none';document.getElementById('forgotWrap').style.display='block';document.getElementById('authModeLink').textContent='CREATE AN ACCOUNT';document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';document.getElementById('authConfirm').value='';showAuth('You have been logged out.');}
+function toggleAccount(ev){ev.stopPropagation();document.getElementById('accountPop').classList.toggle('show');}
+document.addEventListener('click',()=>document.getElementById('accountPop')?.classList.remove('show'));
+async function bootAuth(){const {data:{session}}=await supabaseClient.auth.getSession();if(session){await loadCloudForUser(session.user);showApp(session.user);}else showAuth();supabaseClient.auth.onAuthStateChange(async(event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;cloudReady=false;state={workouts:[],events:[]};saveLocal();showAuth();}});}
+
+function finishLaunchReveal(){
+  const splash=document.getElementById('launchSplash');
+  if(!splash)return;
+  setTimeout(()=>splash.classList.add('hide'),1250);
+}
+bootAuth();
+finishLaunchReveal();
+const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const pad=n=>String(n).padStart(2,'0');
+const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pretty=d=>d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+function updateHome(){
+ let box=document.getElementById('homeUpcoming');
+ if(!box)return;
+ let upcoming=state.events.filter(e=>e.date>=dateKey(new Date())).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+ box.innerHTML=upcoming.length?upcoming.map(e=>{
+   let d=new Date(e.date+'T12:00:00');
+   return `<div class="home-event">
+     <div class="home-event-date"><b>${d.getDate()}</b><small>${months[d.getMonth()].slice(0,3).toUpperCase()}</small></div>
+     <div class="home-event-body"><strong><i class="color-dot event-color-${esc(e.color||'1')}"></i>${esc(e.title)}</strong><span>${esc(e.kind||'EVENT')}${e.note?' - '+esc(e.note):''}</span></div>
+     <button class="clear-event" onclick="clearEvent('${e.id}')">CLEAR</button>
+   </div>`;
+ }).join(''):'<div class="empty">No upcoming events or reminders.<br>Your schedule is clear.</div>';
+}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('backBtn').classList.toggle('show',id!=='home');document.getElementById('accountUser').style.display=(currentUser && id==='home')?'block':'none';window.scrollTo({top:0,behavior:'smooth'})}
+function goHome(){show('home');updateHome()}
+function openTraining(mode){trainingMode=mode;view=new Date();selected=new Date();show('training');renderTraining();updateTrainingMenu()}
+function openCalendar(){view=new Date();selected=new Date();show('calendar');renderCalendar()}
+function openLogs(filter='all'){logFilter=filter;show('logs');renderLogs()}
+function shiftMonth(n){view=new Date(view.getFullYear(),view.getMonth()+n,1);if(document.getElementById('training').classList.contains('active'))renderTraining();else if(document.getElementById('calendar').classList.contains('active'))renderCalendar()}
+function calendarHTML(onPick,marks){
+ let first=new Date(view.getFullYear(),view.getMonth(),1), start=(first.getDay()+6)%7, days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+ let out=['M','T','W','T','F','S','S'].map(x=>`<div class="dow">${x}</div>`).join('');
+ for(let i=0;i<start;i++)out+='<div></div>';
+ for(let n=1;n<=days;n++){let d=new Date(view.getFullYear(),view.getMonth(),n),k=dateKey(d),cls='day'+(dateKey(selected)===k?' selected':'')+(dateKey(new Date())===k?' today':'')+(marks(k)?' has':'');out+=`<button class="${cls}" onclick="${onPick}(${n})">${n}</button>`}
+ return out
+}
+function pickTraining(n){selected=new Date(view.getFullYear(),view.getMonth(),n);renderTraining()}
+function pickCalendar(n){selected=new Date(view.getFullYear(),view.getMonth(),n);renderCalendar()}
+function renderTraining(){
+ updateTrainingMenu();
+ document.getElementById('trainingTitle').textContent=trainingMode==='swim'?'SWIM':'GYM';
+ document.getElementById('trainingMonth').textContent=months[view.getMonth()]+' '+view.getFullYear();
+ document.getElementById('trainingCalendar').innerHTML=calendarHTML('pickTraining',k=>state.workouts.some(w=>w.date===k&&(trainingMode==='gym'?w.type==='gym':w.type==='swim')));
+ let day=state.workouts.filter(w=>w.date===dateKey(selected)&&(trainingMode==='gym'?w.type==='gym':w.type==='swim'));
+ let p=document.getElementById('trainingPanel');
+ if(trainingMode==='swim'){
+  let am=day.find(w=>w.session==='AM'),pm=day.find(w=>w.session==='PM');
+  p.innerHTML=`<p class="eyebrow">${pretty(selected)}</p><div class="session-grid">
+  <button class="session" onclick="newWorkout('swim','AM')"><span class="arr">›</span><strong>AM SESSION</strong><small>${am?'LOGGED - EDIT':'ADD WORKOUT'}</small></button>
+  <button class="session" onclick="newWorkout('swim','PM')"><span class="arr">›</span><strong>PM SESSION</strong><small>${pm?'LOGGED - EDIT':'ADD WORKOUT'}</small></button></div>
+  <button class="ghost" onclick="openLogs('swim')">VIEW LOGGED SWIM WORKOUTS</button>`;
+ }else{
+  let g=day.find(w=>w.type==='gym');
+  p.innerHTML=`<p class="eyebrow">${pretty(selected)}</p>${g?`<div class="diary"><h3>${esc(g.title||'Gym Workout')}</h3><p>${esc(g.notes||summary(g))}</p><div class="actions"><button class="ghost" onclick="editWorkout('${g.id}')">EDIT</button><button class="ghost" onclick="removeWorkout('${g.id}')">DELETE</button></div></div>`:''}
+  <button class="primary" onclick="newWorkout('gym','')">${g?'EDIT GYM WORKOUT':'ADD GYM WORKOUT'}</button>
+  <button class="ghost" onclick="openLogs('gym')">VIEW LOGGED GYM WORKOUTS</button>`;
+ }
+}
+function newWorkout(type,session){editingId=null;show('workoutEditor');renderEditor(type,session,null)}
+function editWorkout(id){let w=state.workouts.find(x=>x.id==id);if(!w)return;selected=new Date(w.date+'T12:00:00');editingId=id;show('workoutEditor');renderEditor(w.type,w.session,w)}
+function renderEditor(type,session,w){
+ document.getElementById('editorTitle').textContent=type==='swim'?'SWIM WORKOUT':'GYM WORKOUT';
+ document.getElementById('editorSub').textContent=pretty(selected)+(session?' - '+session:'');
+ let b=document.getElementById('editorBody');
+ if(type==='swim'){
+  b.innerHTML=`<div class="field"><label>WORKOUT OF THE SESSION</label><input class="entry-font" id="swimTitle" placeholder="e.g. Aerobic Threshold Set" value="${esc(w?.title||'')}"></div>
+  <div class="field"><label>TOTAL MILEAGE (KM)</label><input class="entry-font" id="swimMileage" type="number" min="0" step="0.01" placeholder="e.g. 6.5" value="${esc(w?.mileage??'')}"></div>
+  <div class="field"><label>WORKOUT</label>
+  <div class="rich-toolbar">
+    <button type="button" onclick="formatSwim('bold')" title="Bold"><b>B</b></button>
+    <button type="button" onclick="formatSwim('italic')" title="Italic"><i>I</i></button>
+    <button type="button" onclick="formatSwim('underline')" title="Underline"><u>U</u></button>
+    <button type="button" onclick="formatSwim('foreColor','#191918')" title="Dark">●</button>
+    <button type="button" onclick="formatSwim('foreColor','#7b5555')" title="Muted red">●</button>
+    <button type="button" onclick="formatSwim('foreColor','#536b7d')" title="Muted blue">●</button>
+    <button type="button" onclick="formatSwim('foreColor','#637257')" title="Muted green">●</button>
+  </div>
+  <div id="swimNotes" class="rich-editor entry-font" contenteditable="true" data-placeholder="Write your swim workout...">${w?.notes||''}</div>
+</div>
+  <div class="field"><label>SESSION NOTES</label><textarea class="entry-font" id="swimDiary" placeholder="How did it feel? Pool, conditions, effort...">${esc(w?.diary||'')}</textarea></div>
+  <button class="primary" onclick="saveSwim('${session}')">SAVE WORKOUT</button><button class="ghost" onclick="renderTraining()">CANCEL</button>`;
+ }else{
+  let ex=w?.exercises?.length?normalizeExercises(w.exercises):[{name:'',sets:[{reps:'',weight:''}]}];
+  b.innerHTML=`<div id="exerciseList">${ex.map((e,i)=>exerciseHTML(e,i)).join('')}</div>
+  <button class="ghost" onclick="addExercise()">+ ADD EXERCISE</button>
+  <div class="field"><label>WORKOUT TITLE</label><input class="entry-font" id="gymTitle" placeholder="e.g. Upper Body" value="${esc(w?.title||'')}"></div>
+  <div class="field"><label>NOTES</label><textarea class="entry-font" id="gymNotes" placeholder="How did the session feel?">${esc(w?.notes||'')}</textarea></div>
+  <button class="primary" onclick="saveGym()">SAVE WORKOUT</button><button class="ghost" onclick="renderTraining()">CANCEL</button>`;
+ }
+}
+function formatSwim(command,value=null){
+ const editor=document.getElementById('swimNotes');
+ if(!editor)return;
+ editor.focus();
+ document.execCommand(command,false,value);
+}
+function saveSwim(session){
+ let id=editingId||Date.now(), existing=state.workouts.find(w=>w.id==id), item={id,date:dateKey(selected),type:'swim',session,title:document.getElementById('swimTitle').value.trim(),mileage:document.getElementById('swimMileage').value.trim(),notes:document.getElementById('swimNotes').innerHTML.trim(),diary:document.getElementById('swimDiary').value.trim()};
+ if(existing)Object.assign(existing,item);else state.workouts.unshift(item);
+ persist();toast('Workout saved');renderTraining();show('training')
+}
+function summary(w){
+ return w.exercises?.map(e=>{
+   let sets=Array.isArray(e.sets)?e.sets:[{reps:e.reps||'',weight:e.weight||''}];
+   let detail=sets.map(s=>`${s.reps||'—'}${s.weight?' reps @ '+s.weight+' kg':''}`).join(' - ');
+   return `${e.name||'Exercise'} - ${detail||'logged'}`;
+ }).join('\n')||'Workout logged.'
+}
+function normalizeExercises(exercises){
+ return exercises.map(e=>{
+   if(Array.isArray(e.sets)) return {name:e.name||'',sets:e.sets.length?e.sets.map(s=>({reps:s.reps||'',weight:s.weight||''})):[{reps:'',weight:''}]};
+   return {name:e.name||'',sets:[{reps:e.reps||'',weight:e.weight||''}]};
+ });
+}
+function exerciseHTML(e,i){
+ const sets=(e.sets&&e.sets.length)?e.sets:[{reps:'',weight:''}];
+ return `<div class="exercise">
+   <div class="exercise-head"><input class="entry-font" data-f="name" placeholder="Exercise" value="${esc(e.name||'')}"><button class="remove" onclick="this.closest('.exercise').remove()">×</button></div>
+   <div class="set-list">${sets.map((s,j)=>setHTML(s,j)).join('')}</div>
+   <button class="add-set" onclick="addSet(this)">+ ADD SET</button>
+ </div>`;
+}
+function setHTML(s,j){
+ return `<div class="set-row"><span class="set-number">${j+1}</span><input class="entry-font" data-sf="reps" placeholder="Reps" value="${esc(s.reps||'')}"><input class="entry-font" data-sf="weight" placeholder="Weight (kg)" value="${esc(s.weight||'')}"><button class="set-remove" onclick="removeSet(this)">×</button></div>`;
+}
+function addSet(btn){
+ const list=btn.previousElementSibling, n=list.querySelectorAll('.set-row').length;
+ list.insertAdjacentHTML('beforeend',setHTML({},n));
+}
+function removeSet(btn){
+ const row=btn.closest('.set-row'), list=row.parentElement;
+ if(list.querySelectorAll('.set-row').length===1){row.querySelectorAll('input').forEach(i=>i.value='');return;}
+ row.remove();
+ list.querySelectorAll('.set-row').forEach((r,i)=>r.querySelector('.set-number').textContent=i+1);
+}
+function addExercise(){document.getElementById('exerciseList').insertAdjacentHTML('beforeend',exerciseHTML({name:'',sets:[{reps:'',weight:''}]},Date.now()))}
+function saveGym(){
+ let id=editingId||Date.now();
+ let ex=[...document.querySelectorAll('#exerciseList .exercise')].map(x=>{
+   let name=x.querySelector('[data-f="name"]').value.trim();
+   let sets=[...x.querySelectorAll('.set-row')].map(r=>({
+     reps:r.querySelector('[data-sf="reps"]').value.trim(),
+     weight:r.querySelector('[data-sf="weight"]').value.trim()
+   })).filter(s=>s.reps||s.weight);
+   return {name,sets};
+ }).filter(e=>e.name);
+ let item={id,date:dateKey(selected),type:'gym',title:document.getElementById('gymTitle').value.trim()||'Gym Workout',notes:document.getElementById('gymNotes').value.trim(),exercises:ex};
+ let old=state.workouts.find(w=>w.id==id);if(old)Object.assign(old,item);else state.workouts.unshift(item);
+ persist();toast('Workout saved');renderTraining();show('training')
+}
+function removeWorkout(id){state.workouts=state.workouts.filter(w=>w.id!=id);persist();toast('Workout removed');renderTraining()}
+function setLogFilter(f){logFilter=f;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.filter===f));renderLogs()}
+function renderLogs(){
+ let list=state.workouts.filter(w=>logFilter==='all'||w.type===logFilter).sort((a,b)=>b.date.localeCompare(a.date));
+ document.getElementById('logsTitle').textContent=logFilter==='all'?'WORKOUTS':logFilter==='swim'?'SWIM LOGS':'GYM LOGS';
+ document.getElementById('logsList').innerHTML=list.length?list.map(w=>{let d=new Date(w.date+'T12:00:00');return `<button class="log-row" style="width:100%;text-align:left" onclick="selected=new Date('${w.date}T12:00:00');editWorkout('${w.id}')"><div class="log-date"><b>${d.getDate()}</b><small>${months[d.getMonth()].slice(0,3).toUpperCase()}</small></div><div class="log-info"><strong>${w.type==='swim'?'SWIM - '+w.session:(w.title||'GYM WORKOUT')}</strong><p>${w.type==='swim'?((w.title?esc(w.title)+' - ':'')+(w.mileage?esc(w.mileage)+' km - ':'')+(w.notes||'Logged')):esc(summary(w))}</p></div><span class="chev">›</span></button>`}).join(''):'<div class="empty">No workouts logged yet.<br>Start with your next session.</div>';
+}
+function clearEvent(id){
+ state.events=state.events.filter(e=>e.id!=id);
+ persist();
+ toast('Event cleared');
+ if(document.getElementById('calendar').classList.contains('active'))renderCalendar();
+}
+function renderCalendar(){
+ document.getElementById('calMonth').textContent=months[view.getMonth()]+' '+view.getFullYear();
+ document.getElementById('mainCalendar').innerHTML=calendarHTML('pickCalendar',k=>state.events.some(e=>e.date===k));
+ let upcoming=state.events.filter(e=>e.date>=dateKey(new Date())).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,8);
+ document.getElementById('upcoming').innerHTML=upcoming.length?upcoming.map(e=>{let d=new Date(e.date+'T12:00:00');return `<div class="event"><div class="event-date"><b>${d.getDate()}</b><small>${months[d.getMonth()].slice(0,3).toUpperCase()}</small></div><div class="event-body"><span class="tag"><i class="color-dot event-color-${esc(e.color||'1')}"></i>${esc(e.kind||'EVENT')}</span><strong>${esc(e.title)}</strong><span>${esc(e.note||'')}</span></div><button class="clear-event" onclick="clearEvent('${e.id}')">CLEAR</button></div>`}).join(''):'<div class="empty">Nothing upcoming. Your next chapter is still unwritten.</div>';
+}
+function eventForm(){
+ document.getElementById('eventForm').innerHTML=`<div class="field"><label>TITLE</label><input class="entry-font" id="evTitle" placeholder="e.g. State Championships"></div><div class="field"><label>TYPE</label><select class="entry-font" id="evKind"><option>Competition</option><option>Event</option><option>Reminder</option></select></div><div class="field"><label>DATE</label><input class="entry-font" id="evDate" type="date" value="${dateKey(selected)}"></div><div class="field"><label>COLOUR</label><select class="entry-font" id="evColor"><option value="1">Muted Red</option><option value="2">Muted Blue</option><option value="3">Muted Green</option><option value="4">Warm Sand</option><option value="5">Muted Violet</option></select></div><div class="field"><label>NOTE</label><input class="entry-font" id="evNote" placeholder="Optional"></div><button class="primary" style="margin-top:15px" onclick="saveEvent()">SAVE EVENT</button>`;
+}
+function saveEvent(){let title=document.getElementById('evTitle').value.trim(),date=document.getElementById('evDate').value;if(!title||!date)return;state.events.push({id:Date.now(),title,date,kind:document.getElementById('evKind').value,color:document.getElementById('evColor').value,note:document.getElementById('evNote').value.trim()});persist();document.getElementById('eventForm').innerHTML='';renderCalendar();toast('Event added')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
+function toggleMenu(ev,id){ev.stopPropagation();closeMenus(id);document.getElementById(id)?.classList.toggle('show')}
+function closeMenus(except=''){document.querySelectorAll('.menu-pop').forEach(m=>{if(m.id!==except)m.classList.remove('show')})}
+document.addEventListener('click',()=>closeMenus());
+function updateTrainingMenu(){
+ const menu=document.getElementById('swimMenu');
+ if(!menu)return;
+ const btn=menu.previousElementSibling;
+ const isGym=trainingMode==='gym';
+ btn.setAttribute('aria-label',isGym?'Gym menu':'Swim menu');
+ btn.setAttribute('onclick',"toggleMenu(event,'swimMenu')");
+ menu.innerHTML=`<button onclick="exportPDF('${isGym?'gym':'swim'}');closeMenus()">DOWNLOAD ${isGym?'GYM':'SWIM'} LOGS - PDF</button><button onclick="openExportRange('${isGym?'gym':'swim'}');closeMenus()">CUSTOM DATE RANGE - PDF</button>`;
+}
+function plain(html){
+ const holder=document.createElement('div');
+ holder.innerHTML=String(html??'');
+ const blocks=new Set(['DIV','P','LI','H1','H2','H3','H4','H5','H6','PRE']);
+ function walk(node){
+   let out='';
+   node.childNodes.forEach(child=>{
+     if(child.nodeType===Node.TEXT_NODE) out+=child.nodeValue||'';
+     else if(child.nodeType===Node.ELEMENT_NODE){
+       if(child.tagName==='BR') out+='\n';
+       else {
+         const before=out;
+         out+=walk(child);
+         if(blocks.has(child.tagName) && out!==before && !out.endsWith('\n')) out+='\n';
+       }
+     }
+   });
+   return out;
+ }
+ return walk(holder).replace(/\u00a0/g,' ').replace(/\r/g,'')
+   .split('\n').map(x=>x.replace(/[ \t]+/g,' ').trim()).join('\n')
+   .replace(/\n{3,}/g,'\n\n').trim();
+}
+function pdfDate(v){let d=new Date(v+'T12:00:00');return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()].slice(0,3).toUpperCase()} ${d.getFullYear()}`}
+function pdfSafe(s){
+ return String(s??'-')
+   .replace(/[—–]/g,' - ').replace(/[·•]/g,' - ')
+   .replace(/…/g,'...').replace(/[’‘]/g,"'")
+   .replace(/[“”]/g,'"').replace(/\u00a0/g,' ')
+   .replace(/[\\()]/g,m=>'\\'+m)
+   .replace(/[^\x20-\x7E\n]/g,'');
+}
+function pdfWrap(text,max=92){
+ text=String(text??'').replace(/\r\n?/g,'\n');
+ if(!text.trim())return ['-'];
+ const out=[];
+ text.split('\n').forEach(raw=>{
+   const line0=raw.replace(/[ \t]+/g,' ').trim();
+   if(!line0){out.push('');return;}
+   let line='';
+   line0.split(' ').forEach(word=>{
+     if((line+' '+word).trim().length>max){if(line)out.push(line);line=word;}
+     else line=(line+' '+word).trim();
+   });
+   if(line)out.push(line);
+ });
+ return out.length?out:['-'];
+}
+function openExportRange(type){
+  exportRangeType=type;
+  document.getElementById('exportModalTitle').textContent=`CUSTOM ${type==='calendar'?'CALENDAR':type==='gym'?'GYM':'SWIM'} RANGE`;
+  document.getElementById('exportFrom').value='';
+  document.getElementById('exportTo').value='';
+  document.getElementById('exportModal').classList.add('show');
+}
+function closeExportModal(){document.getElementById('exportModal').classList.remove('show')}
+let exportRangeType='swim';
+function confirmCustomExport(){
+  const from=document.getElementById('exportFrom').value,to=document.getElementById('exportTo').value;
+  if(!from||!to){toast('Choose both dates');return}
+  if(from>to){toast('From date must be before To date');return}
+  closeExportModal();exportPDF(exportRangeType,from,to);
+}
+function exportPDF(type,startDate='',endDate=''){
+  const title=type==='all'?'COMPLETE ALOF TRAINING DIARY':type==='swim'?'SWIM TRAINING DIARY':type==='gym'?'GYM TRAINING DIARY':'CALENDAR';
+  const inRange=x=>(!startDate||x.date>=startDate)&&(!endDate||x.date<=endDate);
+  const getItems=t=>t==='calendar'?state.events.slice().filter(inRange).sort((a,b)=>a.date.localeCompare(b.date)):state.workouts.filter(w=>w.type===t).filter(inRange).sort((a,b)=>a.date.localeCompare(b.date));
+  const sections=type==='all'?[['swim','SWIM TRAINING DIARY'],['gym','GYM TRAINING DIARY'],['calendar','CALENDAR']]:[[type,title]];
+  const lines=[];
+  const add=(text='',size=10,bold=false,gap=1)=>{pdfWrap(text).forEach(t=>lines.push({text:t,size,bold}));for(let i=0;i<gap;i++)lines.push({text:'',size:10,bold:false})};
+  add('ALOF.',24,true,0); add('A LAP OF FAITH',9,false,1); add(title,15,true,0);
+  if(startDate||endDate)add(`${startDate?pdfDate(startDate):'START'} - ${endDate?pdfDate(endDate):'END'}`,8,false,1);
+  add('EXPORTED '+pdfDate(dateKey(new Date())),8,false,2);
+  let total=0;
+  sections.forEach(([section,sectionTitle],si)=>{
+    if(type==='all')add(sectionTitle,14,true,1);
+    const items=getItems(section);total+=items.length;
+    if(!items.length){add('No logs recorded in this range.',10,false,1);return}
+    items.forEach(item=>{
+      add('____________________________________________________________',8,false,1);
+      if(section==='calendar'){
+        add(pdfDate(item.date),8,true,0);add(`${item.kind||'EVENT'} - ${item.title}`,11,true,1);if(item.note)add(item.note,9,false,2);
+      } else if(section==='swim'){
+        add(`${pdfDate(item.date)} - ${item.session||''}`,8,true,0);add(item.title||'SWIM WORKOUT',11,true,1);
+        if(item.mileage)add(`TOTAL MILEAGE: ${item.mileage} KM`,9,false,1);
+        if(item.notes){add('WORKOUT:',9,true,0);add(plain(item.notes),9,false,1);}
+        if(item.diary)add(`SESSION NOTES: ${plain(item.diary)}`,9,false,2);
+      } else {
+        add(pdfDate(item.date),8,true,0);add(item.title||'GYM WORKOUT',11,true,1);
+        (item.exercises||[]).forEach(e=>{add(e.name||'Exercise',9,true,0);(e.sets||[]).forEach((st,i)=>add(`Set ${i+1}: ${st.reps||'—'} reps${st.weight?` @ ${st.weight} kg`:''}`,8,false,0));add('',8,false,1)});
+        if(item.notes){add('NOTES:',9,true,0);add(item.notes,9,false,2);}
+      }
+    });
+    if(type==='all'&&si<sections.length-1)add('',10,false,1);
+  });
+  if(!total){lines.length=0;add('ALOF.',24,true,0);add('A LAP OF FAITH',9,false,1);add(title,15,true,0);if(startDate||endDate)add(`${startDate?pdfDate(startDate):'START'} - ${endDate?pdfDate(endDate):'END'}`,8,false,1);add('EXPORTED '+pdfDate(dateKey(new Date())),8,false,2);add('No logs recorded in this range.',10,false,0)}
+  const PAGE_W=595,PAGE_H=842,LEFT=51,TOP=58,BOTTOM=55;
+  const pages=[];let page=[];let y=TOP;
+  const heights={24:29,15:19,14:18,11:15,10:13,9:12,8:11,7:10};
+  lines.forEach(l=>{const h=l.text===''?6:(heights[l.size]||12);if(y+h>PAGE_H-BOTTOM){pages.push(page);page=[];y=TOP}page.push({...l,y});y+=h});pages.push(page);
+  const objects=[];const catalog=1,pagesObj=2,fontNormal=3,fontBold=4;objects[fontNormal]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';objects[fontBold]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>';
+  const pageIds=[];
+  pages.forEach(pg=>{const cmds=['BT'];pg.forEach(l=>{if(!l.text)return;cmds.push(`/F${l.bold?'2':'1'} ${l.size} Tf`);cmds.push(`1 0 0 1 ${LEFT} ${PAGE_H-l.y} Tm`);cmds.push(`(${pdfSafe(l.text)}) Tj`)});cmds.push('ET');cmds.push('BT','/F1 7 Tf','1 0 0 1 178 30 Tm',`(${pdfSafe('DESIGNED TO BE A REFERENCE FOR FUTURE YOU')}) Tj`,'ET');const stream=cmds.join('\n');const cid=objects.length;objects[cid]=`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`;const pid=objects.length;objects[pid]=`<< /Type /Page /Parent ${pagesObj} 0 R /MediaBox [0 0 ${PAGE_W} ${PAGE_H}] /Resources << /Font << /F1 ${fontNormal} 0 R /F2 ${fontBold} 0 R >> >> /Contents ${cid} 0 R >>`;pageIds.push(pid)});
+  objects[pagesObj]=`<< /Type /Pages /Kids [${pageIds.map(id=>id+' 0 R').join(' ')}] /Count ${pageIds.length} >>`;objects[catalog]=`<< /Type /Catalog /Pages ${pagesObj} 0 R >>`;
+  let pdf='%PDF-1.4\n%âãÏÓ\n',offsets=[0];for(let i=1;i<objects.length;i++){offsets[i]=pdf.length;pdf+=`${i} 0 obj\n${objects[i]}\nendobj\n`};const xref=pdf.length;pdf+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;for(let i=1;i<objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';pdf+=`trailer\n<< /Size ${objects.length} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  const blob=new Blob([pdf],{type:'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);const suffix=startDate||endDate?`_${startDate||'start'}_to_${endDate||'end'}`:'';a.download=`ALOF_${type==='all'?'complete':type}_logs${suffix}.pdf`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('PDF downloaded');
+}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('on');setTimeout(()=>x.classList.remove('on'),1600)}
+</script>
+</body>
+</html>

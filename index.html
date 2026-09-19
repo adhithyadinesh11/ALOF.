@@ -120,11 +120,6 @@ button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}bu
     .mileage-monthly-value{font-size:34px}
   }
 
-#eventForm{width:100%;min-width:0}
-#eventForm .field{width:100%;min-width:0}
-#eventForm input,#eventForm select,#eventForm textarea{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
-#eventForm input[type="date"]{appearance:none;-webkit-appearance:none;min-width:0}
-@media(max-width:699px){#eventForm,#eventForm .field,#eventForm input,#eventForm select,#eventForm textarea{min-width:0;max-width:100%;width:100%;box-sizing:border-box}}
 </style>
 </head>
 <body>
@@ -293,7 +288,7 @@ async function loadCloudForUser(user){
    });
    return [...map.values()];
  };
- const merged={workouts:mergeById(state.workouts,cloudWorkouts),events:cloudEvents};
+ const merged={workouts:mergeById(state.workouts,cloudWorkouts),events:mergeById(state.events,cloudEvents)};
  state=merged;
  window.state=state;
  saveLocal();
@@ -426,7 +421,7 @@ function goBack(){
  else if(prev==='home')updateHome();
 }
 function goHome(){navHistory=[];show('home',{push:false});updateHome()}
-function openTraining(mode){trainingMode=mode;view=new Date();selected=new Date();show('training');renderTraining();updateTrainingMenu()}
+function openTraining(mode){trainingMode=mode;window.lastTrainingMode=mode;view=new Date();selected=new Date();show('training');renderTraining();updateTrainingMenu()}
 function openCalendar(){view=new Date();selected=new Date();show('calendar');renderCalendar()}
 function openLogs(filter='all'){logFilter=filter;show('logs');renderLogs()}
 function shiftMonth(n){view=new Date(view.getFullYear(),view.getMonth()+n,1);if(document.getElementById('training').classList.contains('active'))renderTraining();else if(document.getElementById('calendar').classList.contains('active'))renderCalendar()}
@@ -440,6 +435,7 @@ function calendarHTML(onPick,marks){
 function pickTraining(n){selected=new Date(view.getFullYear(),view.getMonth(),n);renderTraining()}
 function pickCalendar(n){selected=new Date(view.getFullYear(),view.getMonth(),n);renderCalendar()}
 function renderTraining(){
+ window.lastTrainingMode=trainingMode==='gym'?'gym':'swim';
  document.body.classList.toggle('gym-desktop',trainingMode==='gym');
  updateTrainingMenu();
  const mileageWrap=document.getElementById('mileageCheckWrap');if(mileageWrap)mileageWrap.style.display=trainingMode==='swim'?'block':'none';
@@ -613,39 +609,48 @@ async function openCoachView(){
   }catch(e){console.error(e);body.innerHTML='<div class="coach-empty">Coach data could not be loaded. Check the coach access SQL/policies.</div>'}
 }
 async function clearEvent(id){
- const before=Array.isArray(state.events)?state.events.slice():[];
- const next=before.filter(e=>String(e.id)!==String(id));
- if(next.length===before.length)return;
+  const before=Array.isArray(state.events)?state.events.slice():[];
+  const next=before.filter(e=>String(e.id)!==String(id));
+  if(next.length===before.length)return;
 
- state.events=next;
- window.state=state;
+  state.events=next;
+  window.state=state;
+  saveLocal();
+  renderCalendar();
 
- const ok=await saveCloud();
- if(!ok){
-   state.events=before;
-   window.state=state;
-   saveLocal();
-   renderCalendar();
-   toast('Event was not cleared from the cloud.');
-   return;
- }
+  const ok=await saveCloud();
+  if(!ok){
+    state.events=before;
+    window.state=state;
+    saveLocal();
+    renderCalendar();
+    toast('Calendar could not be saved. Event restored.');
+    return;
+  }
 
- saveLocal();
- renderCalendar();
- toast('Event cleared');
+  pendingCloudSave=false;
+  toast('Event cleared');
 }
 function renderCalendar(){
- document.getElementById('calMonth').textContent=months[view.getMonth()]+' '+view.getFullYear();
- document.getElementById('mainCalendar').innerHTML=calendarHTML('pickCalendar',k=>state.events.some(e=>eventCovers(e,k)));
- const selectedKey=dateKey(selected);
- const dayEvents=state.events.filter(e=>eventCovers(e,selectedKey)).sort((a,b)=>eventStart(a).localeCompare(eventStart(b)));
- const label=document.querySelector('#calendar .panel .eyebrow');
- if(label)label.textContent='SELECTED DATE · '+pretty(selected);
- document.getElementById('upcoming').innerHTML=dayEvents.length?dayEvents.map(e=>{
-   let d=new Date(eventStart(e)+'T12:00:00');
-   const isCompetition=(e.kind||'EVENT')==='Competition';
-   const range=isCompetition&&eventStart(e)!==eventEnd(e)?shortEventDateLabel(e):'';
-   return `<div class="event" data-event-id="${esc(e.id)}"><div class="event-date"><b>${d.getDate()}</b><small>${months[d.getMonth()].slice(0,3).toUpperCase()}</small></div><div class="event-body"><span class="tag"><i class="color-dot event-color-${esc(e.color||'1')}"></i>${esc(e.kind||'EVENT')}</span><strong>${esc(e.title)}</strong>${range?`<span>${esc(range)}</span>`:''}${e.note?`<span>${esc(e.note)}</span>`:''}</div><button class="clear-event" onclick="clearEvent('${e.id}')">CLEAR</button></div>`}).join(''):`<div class="empty">No events or reminders for ${esc(pretty(selected))}.</div>`;
+  document.getElementById('calMonth').textContent=months[view.getMonth()]+' '+view.getFullYear();
+  document.getElementById('mainCalendar').innerHTML=calendarHTML('pickCalendar',k=>state.events.some(e=>eventCovers(e,k)));
+
+  const selectedKey=dateKey(selected);
+  const dayEvents=state.events
+    .filter(e=>eventCovers(e,selectedKey))
+    .sort((a,b)=>eventStart(a).localeCompare(eventStart(b)));
+
+  const label=document.querySelector('#calendar .panel .eyebrow');
+  if(label)label.textContent='SELECTED DATE · '+pretty(selected);
+
+  document.getElementById('upcoming').innerHTML=dayEvents.length
+    ?dayEvents.map(e=>{
+      const d=new Date(eventStart(e)+'T12:00:00');
+      const isCompetition=(e.kind||'EVENT')==='Competition';
+      const range=isCompetition&&eventStart(e)!==eventEnd(e)?shortEventDateLabel(e):'';
+      return `<div class="event" data-event-id="${esc(e.id)}"><div class="event-date"><b>${d.getDate()}</b><small>${months[d.getMonth()].slice(0,3).toUpperCase()}</small></div><div class="event-body"><span class="tag"><i class="color-dot event-color-${esc(e.color||'1')}"></i>${esc(e.kind||'EVENT')}</span><strong>${esc(e.title)}</strong>${range?`<span>${esc(range)}</span>`:''}${e.note?`<span>${esc(e.note)}</span>`:''}</div><button class="clear-event" onclick="clearEvent('${e.id}')">CLEAR</button></div>`
+    }).join('')
+    :`<div class="empty">No events or reminders for ${esc(pretty(selected))}.</div>`;
 }
 function toggleEventDates(){
  const kind=document.getElementById('evKind')?.value;
@@ -666,50 +671,62 @@ function eventForm(){
  toggleEventDates();
 }
 async function saveEvent(){
- const title=document.getElementById('evTitle').value.trim();
- const kind=document.getElementById('evKind').value;
- const date=document.getElementById('evDate').value;
- const endDate=kind==='Competition'?document.getElementById('evEndDate').value:date;
- if(!title||!date){toast('Enter a title and date');return}
- if(kind==='Competition'&&(!endDate||endDate<date)){toast('End date must be on or after start date');return}
- const before=Array.isArray(state.events)?state.events.slice():[];
- const event={id:Date.now(),title,date,startDate:date,endDate:kind==='Competition'?endDate:date,kind,color:document.getElementById('evColor').value,note:document.getElementById('evNote').value.trim()};
- state.events=[...before,event];
- window.state=state;
- const ok=await saveCloud();
- if(!ok){
-   state.events=before;
-   window.state=state;
-   saveLocal();
-   renderCalendar();
-   toast('Event was not saved to the cloud.');
-   return;
- }
- document.getElementById('eventForm').innerHTML='';
- selected=new Date(date+'T12:00:00');
- view=new Date(selected.getFullYear(),selected.getMonth(),1);
- renderCalendar();
- toast('Event added');
+  const title=document.getElementById('evTitle').value.trim();
+  const kind=document.getElementById('evKind').value;
+  const date=document.getElementById('evDate').value;
+  const endDate=kind==='Competition'?document.getElementById('evEndDate').value:date;
+  if(!title||!date){toast('Enter a title and date');return}
+  if(kind==='Competition'&&(!endDate||endDate<date)){toast('End date must be on or after start date');return}
+
+  const before=Array.isArray(state.events)?state.events.slice():[];
+  const event={
+    id:Date.now(),
+    title,
+    date,
+    startDate:date,
+    endDate:kind==='Competition'?endDate:date,
+    kind,
+    color:document.getElementById('evColor').value,
+    note:document.getElementById('evNote').value.trim()
+  };
+
+  state.events=[...before,event];
+  window.state=state;
+  saveLocal();
+  renderCalendar();
+
+  const ok=await saveCloud();
+  if(!ok){
+    state.events=before;
+    window.state=state;
+    saveLocal();
+    renderCalendar();
+    toast('Calendar could not be saved. Event was not added.');
+    return;
+  }
+
+  pendingCloudSave=false;
+  document.getElementById('eventForm').innerHTML='';
+  toast('Event added');
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]) )}
 function toggleMenu(ev,id){ev.stopPropagation();closeMenus(id);document.getElementById(id)?.classList.toggle('show')}
 function closeMenus(except=''){document.querySelectorAll('.menu-pop').forEach(m=>{if(m.id!==except)m.classList.remove('show')})}
 document.addEventListener('click',()=>closeMenus());
 function updateTrainingMenu(){
- const menu=document.getElementById('swimMenu'); if(!menu)return;
+ const menu=document.getElementById('trainingMenu')||document.getElementById('swimMenu'); if(!menu)return;
  menu.id='trainingMenu';
  const btn=menu.previousElementSibling;
- btn.setAttribute('aria-label',trainingMode==='gym'?'Gym menu':'Swim menu');
+ const mode=trainingMode==='gym'?'gym':'swim';
+ const isGym=mode==='gym';
+ window.lastTrainingMode=mode;
+ btn.setAttribute('aria-label',isGym?'Gym menu':'Swim menu');
  btn.setAttribute('onclick',`toggleMenu(event,'trainingMenu')`);
- menu.innerHTML=`<button id="currentTrainingPdfBtn">DOWNLOAD ${trainingMode==='gym'?'GYM':'SWIM'} LOGS · PDF</button><button onclick="openExportRange('${trainingMode}');closeMenus()">CUSTOM DATE RANGE · PDF</button><button onclick="exportPDF('all');closeMenus()">DOWNLOAD COMPLETE ALOF · PDF</button>`;
- const pdfBtn=document.getElementById('currentTrainingPdfBtn');
- if(pdfBtn){
-   pdfBtn.onclick=function(){
-     const pageType=(document.getElementById('trainingTitle')?.textContent||'').trim().toUpperCase()==='GYM'?'gym':'swim';
-     closeMenus();
-     exportPDF(pageType);
-   };
- }
+ menu.innerHTML=`<button id="currentTrainingExportBtn">DOWNLOAD ${isGym?'GYM':'SWIM'} LOGS · PDF</button><button id="currentTrainingRangeBtn">CUSTOM DATE RANGE · PDF</button><button onclick="exportPDF('all');closeMenus()">DOWNLOAD COMPLETE ALOF · PDF</button>`;
+ const pdfBtn=document.getElementById('currentTrainingExportBtn');
+ if(pdfBtn)pdfBtn.onclick=function(){exportPDF(mode);closeMenus()};
+ const rangeBtn=document.getElementById('currentTrainingRangeBtn');
+ if(rangeBtn)rangeBtn.onclick=function(){window.exportReturnTrainingMode=mode;openExportRange(mode);closeMenus()};
 }
 function plain(html){
   let d=document.createElement('div');
@@ -757,12 +774,28 @@ function pdfWrap(text,max=92){
 }
 function openExportRange(type){
   exportRangeType=type;
+  window.exportReturnTrainingMode=(type==='gym'||type==='swim')?type:null;
   document.getElementById('exportModalTitle').textContent=`CUSTOM ${type==='calendar'?'CALENDAR':type==='gym'?'GYM':'SWIM'} RANGE`;
   document.getElementById('exportFrom').value='';
   document.getElementById('exportTo').value='';
   document.getElementById('exportModal').classList.add('show');
 }
-function closeExportModal(){document.getElementById('exportModal').classList.remove('show')}
+function closeExportModal(){
+  document.getElementById('exportModal').classList.remove('show');
+  const mode=window.exportReturnTrainingMode||window.lastTrainingMode;
+  if(mode==='gym'||mode==='swim'){
+    trainingMode=mode;
+    view=new Date();
+    selected=new Date();
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const training=document.getElementById('training');
+    if(training)training.classList.add('active');
+    const back=document.getElementById('backBtn');
+    if(back)back.classList.add('show');
+    renderTraining();
+    window.scrollTo(0,0);
+  }
+}
 let exportRangeType='swim';
 function confirmCustomExport(){
   const from=document.getElementById('exportFrom').value,to=document.getElementById('exportTo').value;

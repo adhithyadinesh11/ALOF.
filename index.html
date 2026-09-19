@@ -19,7 +19,7 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Syne',Arial,sans-serif;-webkit-font-smoothing:antialiased}
 button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .app{max-width:560px;margin:auto;min-height:100vh;padding:24px 20px 44px}
-.top{height:54px;display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}
+.top{height:54px;display:flex;align-items:center;justify-content:flex-start;margin-bottom:34px}
 .wordmark{display:flex;align-items:center;gap:10px}.mini-logo{width:31px;height:31px;object-fit:cover;border-radius:8px;display:none}.wordmark h1{font-family:'Syne',Arial,sans-serif;font-size:31px;font-weight:700;line-height:1;letter-spacing:-2px;margin:0}.wordmark small{display:block;font-size:8px;letter-spacing:2.3px;color:var(--muted);margin-top:5px}
 .back{width:40px;height:40px;border:1px solid var(--line);background:transparent;border-radius:50%;font-size:20px;display:none}.back.show{display:block}
 .screen{display:none}.screen.active{display:block}
@@ -55,7 +55,7 @@ button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}bu
 /* ALOF launch reveal */
 #launchSplash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #launchSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
-.launch-logo{width:126px;height:126px;object-fit:cover;border-radius:28px;animation:alofReveal 1.05s cubic-bezier(.2,.75,.25,1) both}
+.launch-logo{width:min(280px,72vw);height:auto;max-height:62vh;object-fit:contain;border-radius:0;animation:alofReveal 1.05s cubic-bezier(.2,.75,.25,1) both}
 @keyframes alofReveal{0%{opacity:0;transform:scale(.82);filter:blur(7px)}55%{opacity:1;transform:scale(1.03);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
 @media(max-width:699px){
   .app{padding:8px 16px 18px;min-height:100svh}
@@ -92,7 +92,7 @@ button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}bu
 </style>
 </head>
 <body>
-<div id="launchSplash" aria-hidden="true"><img class="launch-logo" src="alof-icon-180.png" alt="ALOF."></div>
+<div id="launchSplash" aria-hidden="true"><img class="launch-logo" src="alof-launch-logo.png" alt="ALOF."></div>
 <div id="authLoading" class="auth-loading">LOADING ALOF.</div>
 <section id="authGate">
   <div class="auth-card">
@@ -116,8 +116,7 @@ button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}bu
 </div>
 <div class="app" id="appShell" style="display:none">
 <header class="top">
-  <div></div>
-  <button class="back" id="backBtn" onclick="goHome()">←</button>
+  <button class="back" id="backBtn" onclick="goHome()" aria-label="Back">←</button>
 </header>
 
 <section id="home" class="screen active">
